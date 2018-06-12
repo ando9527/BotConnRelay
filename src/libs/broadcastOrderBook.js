@@ -17,7 +17,7 @@ export const broadcastOrderBook = (message:string) => {
       if (dataSymbol===symbol){
         const client = getClientById(i)
         if (!client) throw new Error(`Client ${i} not available, while broadcastOrderBook`)
-        client.send(i)
+        client.send(message)
       }
     }
   }
