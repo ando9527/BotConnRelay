@@ -3,9 +3,10 @@ import dotenv from 'dotenv'
 import store from './store'
 import { haltProcess } from './utils/utils'
 import logger from './utils/winston';
+import { broadcastOrders } from './libs/broadcastOrders';
 dotenv.load()
 const WS = require('ws')
-let client = null
+export let client = null
 export let connected = false
 let connecting = false
 
@@ -16,7 +17,6 @@ const connect = () => {
   connecting = true
   const wsURL = 'wss://ws.cobinhood.com/v2/ws'
   logger.info(`[Websocket][Cobinhood] WS connecting to ${wsURL}`)
-  console.log(process.env.APP_API_SECRET);
   
   client = new WS(wsURL, [], {
     headers: {
@@ -32,19 +32,8 @@ const connect = () => {
     connected = true
     if (client===null) throw new Error('Client is null')
 
-    // client.send(
-    //   JSON.stringify({
-    //     action: 'subscribe',
-    //     type: 'order-book',
-    //     trading_pair_id: "EOS-ETH",
-    //   }),
-    // )
-    client.send(
-      JSON.stringify({
-        action: 'subscribe',
-        type: 'order',
-      }),
-    )
+
+    
 
 
   })
@@ -57,13 +46,12 @@ const connect = () => {
   })
 
   client.on('message', async message => {
-    const { h: header, d: dataPayload } = JSON.parse(message)
+    const { h: header, d: data } = JSON.parse(message)
     // [channel_id, version, type, request_id (optional)]
     const channelId = header[0]
     const type = header[2]
-    console.log(message);
+    if (channelId==="order")return broadcastOrders(message)
     
-
 
 
     if (type === 'error'){
@@ -81,7 +69,7 @@ const connect = () => {
   })
 }
 
-export const startSync = () => {
+export const connectCobinhood = () => {
   setInterval(async () => {
     if (connected) return
     connect()
@@ -100,5 +88,3 @@ export const startSync = () => {
     )
   }, 20000)
 }
-
-startSync()
