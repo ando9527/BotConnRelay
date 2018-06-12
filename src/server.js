@@ -48,7 +48,7 @@ wss.on('connection', (ws: WebSocket, req) => {
 
   ws.on('message', (message: string) => {
     const { action, trading_pair_id: symbol, type} = JSON.parse(message)
-    if (action!=='ping' || action!=="modify_order") logger.info(`[Websocket][RelayServer][On Message] Received: ${message}`)
+    if (action!=='ping' && action!=="modify_order") logger.info(`[Websocket][RelayServer][On Message] Received: ${message}`)
     if (action==="modify_order") logger.debug(`[Websocket][RelayServer][On Message] Received: ${message}`)
     if (action === 'ping') return ws.send(JSON.stringify({ h: ['', '1', 'pong'], d: [] }))
     // Send message to cobinhood ws server
