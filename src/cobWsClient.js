@@ -40,8 +40,11 @@ const connect = () => {
   })
 
   client.on('close', function(data) {
-    logger.info('[Websocket][Cobinhood] WS close')
-    if (data) logger.info(JSON.parse(data))
+    logger.info('[Websocket][Cobinhood][Close] WS close')
+    if (data) logger.info(`[Websocket][Cobinhood][Close] ${JSON.stringify(data)}`)
+    logger.info('[Websocket][Cobinhood] Force exit program')
+    process.exit(1)
+    
     connecting = false
     connected = false
   })

@@ -8,7 +8,7 @@ import store from './store'
 import { addSub, removeClient } from './actions/sub '
 import { haltProcess } from './utils/utils';
 import logger from './utils/winston';
-import { connectCobinhood, client} from './cobWsClient';
+import { connectCobinhood, client, connected} from './cobWsClient';
 
 
 const app = express()
@@ -89,13 +89,7 @@ wss.on('connection', (ws: WebSocket, req) => {
 })
 
 
-/**
- * Start server
- */
-server.listen(process.env.APP_PORT || 7000, () => {
-  logger.info(`[Websocket][RelayServer] Server started on port ${server.address().port}`)
-  
-})
+
 
 /**
  * Avoid broken connection
@@ -111,3 +105,18 @@ setInterval(function ping() {
 
 
 connectCobinhood()
+
+/**
+ * Start server
+ */
+
+const interval = setInterval(()=>{
+  if(connected===true){
+    server.listen(process.env.APP_PORT || 7000, () => {
+      logger.info(`[Websocket][RelayServer] Server started on port ${server.address().port}`)
+      
+    })
+    clearInterval(interval)
+  }
+},1000)
+
