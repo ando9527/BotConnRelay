@@ -1,3 +1,4 @@
+// @flow
 import {register} from 'babel-core'
 import polyfill from 'babel-polyfill'
 import express from 'express'
@@ -11,14 +12,14 @@ import { connectCobinhood, client} from './cobWsClient';
 
 
 const app = express()
-export const clientList = new Map()
+export const clientList: Map<string,any> = new Map()
 //initialize a simple http server
 const server = http.createServer(app)
 
 //initialize the WebSocket server instance
 const wss = new WebSocket.Server({ server })
 
-function getClientById(id) {
+export const getClientById=(id: string)=>{
   return clientList.get(id)
 }
 
@@ -38,8 +39,8 @@ wss.on('connection', (ws: WebSocket, req) => {
   const id = req.headers['sec-websocket-key']
   const source = req.headers['x-real-ip']||req.connection.remoteAddress
   clientList.set(id, ws)
-  logger.info(`[On Connection] Client socket opened, id: ${id}, source ip: ${source} `)
-  logger.info(`[On Connection] Clients number(clientList Map): ${clientList.size}`)
+  logger.info(`[Websocket][RelayServer][On Connection] Client socket opened, id: ${id}, source ip: ${source} `)
+  logger.info(`[Websocket][RelayServer][On Connection] Clients number(clientList Map): ${clientList.size}`)
 
   // Avoid broken connection
   ws.isAlive = true;
@@ -47,7 +48,7 @@ wss.on('connection', (ws: WebSocket, req) => {
 
   ws.on('message', (message: string) => {
     const { action, symbol, type} = JSON.parse(message)
-    if (action!=='ping') logger.info(`[On Message] Received: ${message}`)
+    if (action!=='ping') logger.info(`[Websocket][RelayServer][On Message] Received: ${message}`)
     if (action === 'ping') return ws.send(JSON.stringify({ h: ['', '1', 'pong'], d: [] }))
     // Send message to cobinhood ws server
     if (client)client.send(message)
@@ -55,24 +56,24 @@ wss.on('connection', (ws: WebSocket, req) => {
     if (action === 'subscribe' && type!=="order") {
       store.dispatch(addSub({ payload: { clientId: id, symbol } }))
       const subSize = Object.keys(store.getState().sub).length
-      logger.info(`[On Message] Client: (${id}) (${source}), subbed: ${message}`)
-      logger.debug(`[On Message] Subbed clients: ${subSize}`)
+      logger.info(`[Websocket][RelayServer][On Message] Client: (${id}) (${source}), subbed: ${message}`)
+      logger.debug(`[Websocket][RelayServer][On Message] Subbed clients: ${subSize}`)
       return 
     }
   })
 
 
   ws.on('close', (data) => {
-    if (data) logger.debug(`[On Close] Message ${JSON.parse(data)}`)
+    if (data) logger.debug(`[Websocket][RelayServer][On Close] Message ${JSON.parse(data)}`)
     /**
      * Remove client socket from the store
      */
     clientList.delete(id)
     store.dispatch(removeClient({ payload: { clientId: id } }))
-    logger.debug(`[On Close] Client socket closed (${id}) (${source})`)
-    logger.debug(`[On Close] Clients number(clientList Map): ${clientList.size}`)
+    logger.debug(`[Websocket][RelayServer][On Close] Client socket closed (${id}) (${source})`)
+    logger.debug(`[Websocket][RelayServer][On Close] Clients number(clientList Map): ${clientList.size}`)
     const subSize = Object.keys(store.getState().sub).length
-    logger.debug(`[On Close] Subbed clients: ${subSize}`)
+    logger.debug(`[Websocket][RelayServer][On Close] Subbed clients: ${subSize}`)
   })
 
   ws.addEventListener('error', (err) =>{
@@ -82,7 +83,7 @@ wss.on('connection', (ws: WebSocket, req) => {
      */
     const allowList =['Invalid WebSocket frame: invalid status code 1006']
     if (allowList.includes(err.message)) return logger.warn(`[Error Listener] ${err.message}`)
-    logger.error(`[Error Listener] ${err.message}`)
+    logger.error(`[Websocket][RelayServer][Error Listener] ${err.message}`)
     haltProcess(err)
   })
 })
@@ -92,7 +93,7 @@ wss.on('connection', (ws: WebSocket, req) => {
  * Start server
  */
 server.listen(process.env.APP_PORT || 7000, () => {
-  logger.info(`Server started on port ${server.address().port}`)
+  logger.info(`[Websocket][RelayServer] Server started on port ${server.address().port}`)
   
 })
 

@@ -1,6 +1,7 @@
 // @flow
 import type { SubMap, AllSubActions } from '../types/subMap'
 import { SET_SUB_MAP, ADD_SUB, REMOVE_CLIENT } from '../types/subMap'
+import logger from '../utils/winston';
 
 const subReducer = (state: SubMap = {}, action: AllSubActions) => {
   switch (action.type) {
@@ -9,6 +10,7 @@ const subReducer = (state: SubMap = {}, action: AllSubActions) => {
     }
     case ADD_SUB: {
       const { symbol, clientId } = action.payload
+      logger.debug(`[Redux][Sub][ADD_SUB][Payload] ${JSON.stringify(action.payload)} `)
       if (clientId in state === false)
         return Object.assign({}, state, { [clientId]: { symbolList: [symbol] } })
 

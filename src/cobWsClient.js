@@ -4,6 +4,7 @@ import store from './store'
 import { haltProcess } from './utils/utils'
 import logger from './utils/winston';
 import { broadcastOrders } from './libs/broadcastOrders';
+import { broadcastOrderBook } from './libs/broadcastOrderBook';
 dotenv.load()
 const WS = require('ws')
 export let client = null
@@ -46,13 +47,15 @@ const connect = () => {
   })
 
   client.on('message', async message => {
+    
     const { h: header, d: data } = JSON.parse(message)
     // [channel_id, version, type, request_id (optional)]
     const channelId = header[0]
     const type = header[2]
+    if (type==="pong")return 
+    logger.debug(`[Websocket][Cobinhood][Message] ${message}`)
     if (channelId==="order")return broadcastOrders(message)
-    
-
+    if (channelId.startsWith("order-book")===true)return broadcastOrderBook(message)
 
     if (type === 'error'){
       const errorMessage = header[4] 
