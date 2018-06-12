@@ -1,0 +1,16 @@
+version: '2'
+services:
+  price-wsserver:
+    build: .
+    restart: always
+    networks:
+      - web
+    labels:
+      - "traefik.backend=price-wsserver"
+      - "traefik.port=80"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:${APP_DOMAIN_NAME};PathPrefixStrip:/ws"
+      - "traefik.enable=true"
+networks:
+  web:
+    external: true

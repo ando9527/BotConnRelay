@@ -1,0 +1,55 @@
+{
+  "name": "nodeproject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.3",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-zavatta": "^6.0.2",
+    "prettier": "^1.13.0",
+    "rimraf": "^2.6.2"
+  },
+  "scripts": {
+    "server": "babel-node ./src/server",
+    "dev": "babel-node ./src",
+    "build": "rimraf dist && babel src -d dist",
+    "test": "ava",
+    "lint": "eslint src"
+  },
+  "ava": {
+    "require": [
+      "babel-register",
+      "babel-polyfill"
+    ],
+    "files": [
+      "test/index.js"
+    ],
+    "babel": "inherit"
+  },
+  "quokka": {
+    "babel": true
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bignumber.js": "^7.2.1",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "moment": "^2.22.2",
+    "moment-timezone": "^0.5.17",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0",
+    "winston": "^2.4.2",
+    "ws": "^5.2.0"
+  }
+}
