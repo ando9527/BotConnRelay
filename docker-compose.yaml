@@ -1,8 +1,10 @@
 version: '2'
 services:
   relay-ws-server:
-    build: .
+    image: docker.kumay.net/relay-ws-server:latest
     restart: always
+    env_file:
+      - .env
     networks:
       - websocket
 networks:

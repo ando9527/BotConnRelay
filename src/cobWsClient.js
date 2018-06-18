@@ -64,7 +64,7 @@ const connect = () => {
       const errorMessage = header[4] 
       // {"h":["modify-order-undefined","2","error","4021","balance_locked"],"d":[]}
       if (errorMessage==="balance_locked") return logger.info('balance_locked');
-      await haltProcess(`WS error:${message}`)
+      await haltProcess(`[Websocket][Cobinhood]WS error:${message}`)
     }
     
   })
