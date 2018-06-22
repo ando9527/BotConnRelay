@@ -26,9 +26,9 @@ describe('WS Server', () => {
     })
   })
   afterEach(done => {
-    if (connected) {
-      client.close()
-    }
+
+    client.close()
+
     done()
   })
 
@@ -46,6 +46,20 @@ describe('WS Server', () => {
 
     client.send(JSON.stringify(ping))
   })
+  it('sub', (done) => {
+    client.on('message', data=>{
+      // const {h:header} = JSON.parse(data)
+      // assert.equal(header[2], 'pong')
+      console.log(data);
+      done()
+    })
+    const add = {
+      action: 'subscribe',
+      type: 'order-book',
+      trading_pair_id: "EOS-ETH",
+    }
+    client.send(JSON.stringify(add))
+  });
 })
 
 // test.serial('ping', async t => {
@@ -61,10 +75,10 @@ describe('WS Server', () => {
 
 //   message = null
 //   await new Promise(res => {
-//     const add = {
-//       action: "subscribe",
-//       symbol: "eos"
-//     }
+    // const add = {
+    //   action: "subscribe",
+    //   symbol: "eos"
+    // }
 //     client.send(JSON.stringify(add))
 //     setTimeout(() => {
 //       res()
