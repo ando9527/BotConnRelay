@@ -1,10 +1,8 @@
 // @flow
-import dotenv from 'dotenv'
 import store from './store'
 import { broadcastOrders } from './libs/broadcastOrders';
 import { broadcastOrderBook } from './libs/broadcastOrderBook';
 import logger from './helpers/logger';
-dotenv.load()
 const WS = require('ws')
 export let client = null
 export let connected = false
