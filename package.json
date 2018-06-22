@@ -23,7 +23,7 @@
     "rimraf": "^2.6.2"
   },
   "scripts": {
-    "dev": "babel-node ./src/server",
+    "dev": "babel-node ./test/dev",
     "build": "rimraf dist && babel src -d dist",
     "test": "ava",
     "lint": "eslint src"
