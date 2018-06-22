@@ -1,2 +1,2 @@
 // import './server'
-import './store'
+import '../src/store'

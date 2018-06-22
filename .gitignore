@@ -4,3 +4,4 @@ node_modules/
 dist/
 coverage/
 coverage
+.alpha.js
