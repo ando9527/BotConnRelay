@@ -4,8 +4,9 @@ import winston from './winston'
 import store from '../store'
 
 class Logger {
-  static error = async (error: Error, addition: ?string = null) => {
+  static error = (error: Error, addition: ?string = null) => {
     const info = store.getState()
+
     const extra = {
       store: info,
       addition,
@@ -13,8 +14,6 @@ class Logger {
     winston.error(error.stack)
     winston.error(`Extra Info: ${JSON.stringify(extra)} `)
     sentry.captureException(error, { extra })
-    
-    process.exit(1)
   }
 
   static info = (message: string) => {
@@ -37,6 +36,9 @@ class Logger {
     }
     winston.warn(`Extra Info: ${JSON.stringify(extra)} `)
     sentry.captureMessage(message, { extra })
+  }
+  static getSentry=()=>{
+    return sentry
   }
 }
 

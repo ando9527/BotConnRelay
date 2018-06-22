@@ -27,19 +27,6 @@
     "test": "ava",
     "lint": "eslint src"
   },
-  "ava": {
-    "require": [
-      "babel-register",
-      "babel-polyfill"
-    ],
-    "files": [
-      "test/index.js"
-    ],
-    "babel": "inherit"
-  },
-  "quokka": {
-    "babel": true
-  },
   "dependencies": {
     "axios": "^0.18.0",
     "bignumber.js": "^7.2.1",

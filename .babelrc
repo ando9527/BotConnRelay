@@ -12,8 +12,7 @@
     "stage-0"
   ],
   "plugins": [
-    ["transform-flow-strip-types"],
-    ["module-resolver", { "root": ["src"] }]
+    ["transform-flow-strip-types"]
   ],
   "retainLines": true
 }

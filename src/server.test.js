@@ -60,29 +60,29 @@ describe('WS Server', () => {
     }
     client.send(JSON.stringify(add))
   });
+  it('Error Listener', (done) => {
+    const ping = {
+      action: 'dcme',
+    }
+    client.send(JSON.stringify(ping))
+
+    client.addListener('error',(err)=>{
+      console.log('errrrrrrrrrrrrrrrrrrrrrrrrrrrr');
+      
+      console.log(err);
+      done()
+    })
+  });
+  it('On Close', (done) => {
+    const ping = {
+      action: 'dcme',
+    }
+    client.send(JSON.stringify(ping))
+
+    client.on('close',(data)=>{
+      console.log(data);
+      done()
+    })
+  });
 })
 
-// test.serial('ping', async t => {
-//   message = null
-//   await new Promise(res => {
-
-//     setTimeout(() => {
-//       res()
-//     }, 100)
-//   })
-
-//   t.deepEqual(message, {h:["","1","pong"],d:[]})
-
-//   message = null
-//   await new Promise(res => {
-    // const add = {
-    //   action: "subscribe",
-    //   symbol: "eos"
-    // }
-//     client.send(JSON.stringify(add))
-//     setTimeout(() => {
-//       res()
-//     }, 100)
-//   })
-//   t.deepEqual(message, { h: ["eos", '1', 'subscribed'], d: [] })
-// })

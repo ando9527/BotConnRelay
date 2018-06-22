@@ -41,7 +41,7 @@ wss.on('connection', (ws: WebSocket, req) => {
   clientList.set(id, ws)
   logger.info(`[Websocket][RelayServer][On Connection] Client socket opened, id: ${id}, source ip: ${source} `)
   logger.info(`[Websocket][RelayServer][On Connection] Clients number(clientList Map): ${clientList.size}`)
-
+  
   // Avoid broken connection
   ws.isAlive = true;
   ws.on('pong', heartbeat);
@@ -50,7 +50,8 @@ wss.on('connection', (ws: WebSocket, req) => {
     const { action, trading_pair_id: symbol, type} = JSON.parse(message)
     if (action!=='ping' && action!=="modify_order") logger.info(`[Websocket][RelayServer][On Message] Received: ${message}`)
     if (action==="modify_order") logger.debug(`[Websocket][RelayServer][On Message] Received: ${message}`)
-    if (action === 'ping') return ws.send(JSON.stringify({ h: ['', '1', 'pong'], d: [] }))
+    if (action === 'ping')return ws.send(JSON.stringify({ h: ['', '1', 'pong'], d: [] }))
+    if (action === 'dcme')return ws.close()
     // Send message to cobinhood ws server
     if (client)client.send(message)
 
@@ -82,12 +83,11 @@ wss.on('connection', (ws: WebSocket, req) => {
      * code 1006
      * Did not receive closed code from client, possible client closed unexpected. 
      */
-    const allowList =['Invalid WebSocket frame: invalid status code 1006']
-    if (allowList.includes(err.message)) return logger.warn(`[Error Listener] ${err.message}`)
-    logger.error(err)
+    logger.warn(`[Websocket][RelayServer] Error event listener, err code: ${err.code}, err message: ${err.message}`)
+    // const allowList =['Invalid WebSocket frame: invalid status code 1006']
+    // if (allowList.includes(err.message)) return logger.warn(`[Error Listener] ${err.message}`)
   })
 })
-
 
 
 
