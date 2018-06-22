@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import logger from './winston';
+import logger from '../helpers/logger';
 
 export const plus = (a, b) => {
   const x = new BigNumber(parseFloat(a).toFixed(10))

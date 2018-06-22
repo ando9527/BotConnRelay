@@ -1,7 +1,7 @@
 // @flow
 import type { SubMap, AllSubActions } from '../types/subMap'
 import { SET_SUB_MAP, ADD_SUB, REMOVE_CLIENT } from '../types/subMap'
-import logger from '../utils/winston';
+import logger from '../helpers/logger';
 
 const subReducer = (state: SubMap = {}, action: AllSubActions) => {
   switch (action.type) {

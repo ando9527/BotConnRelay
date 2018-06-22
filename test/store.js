@@ -1,7 +1,6 @@
 import test from 'ava'
 import store from '../src/store';
 import { setSubMap, addSub, removeClient } from '../src/actions/sub ';
-import logger from '../src/utils/winston';
 test.serial('subReducer - setSubMap', async t => {
   const payload = {'123456': {symbolList:['eos']}}
   store.dispatch(setSubMap({payload}))

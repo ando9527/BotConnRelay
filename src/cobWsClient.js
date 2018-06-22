@@ -1,16 +1,14 @@
 // @flow
 import dotenv from 'dotenv'
 import store from './store'
-import { haltProcess } from './utils/utils'
-import logger from './utils/winston';
 import { broadcastOrders } from './libs/broadcastOrders';
 import { broadcastOrderBook } from './libs/broadcastOrderBook';
+import logger from './helpers/logger';
 dotenv.load()
 const WS = require('ws')
 export let client = null
 export let connected = false
 let connecting = false
-
 
 
 const connect = () => {
@@ -50,22 +48,13 @@ const connect = () => {
   })
 
   client.on('message', async message => {
-    
-    const { h: header, d: data } = JSON.parse(message)
-    // [channel_id, version, type, request_id (optional)]
-    const channelId = header[0]
-    const type = header[2]
-    if (type==="pong")return 
-    logger.debug(`[Websocket][Cobinhood][Message] ${message}`)
-    if (channelId==="order")return broadcastOrders(message)
-    if (channelId.startsWith("order-book")===true)return broadcastOrderBook(message)
-
-    if (type === 'error'){
-      const errorMessage = header[4] 
-      // {"h":["modify-order-undefined","2","error","4021","balance_locked"],"d":[]}
-      if (errorMessage==="balance_locked") return logger.info('balance_locked');
-      await haltProcess(`[Websocket][Cobinhood]WS error:${message}`)
+    try {
+      onRawMessage(message)
+    } catch (e) {
+      logger.error(e)
     }
+
+
     
   })
   client.addEventListener('error', (err) =>{
@@ -73,6 +62,24 @@ const connect = () => {
     connected = false
     logger.warn(`[Websocket][Cobinhood] Error event listener ${err.message}`)
   })
+}
+
+const onRawMessage=(rawMessage: string)=>{
+  const { h: header, d: data } = JSON.parse(rawMessage)
+  // [channel_id, version, type, request_id (optional)]
+  const channelId = header[0]
+  const type = header[2]
+  if (type==="pong")return 
+  logger.debug(`[Websocket][Cobinhood][Message] ${rawMessage}`)
+  if (channelId==="order")return broadcastOrders(rawMessage)
+  if (channelId.startsWith("order-book")===true)return broadcastOrderBook(rawMessage)
+
+  if (type === 'error'){
+    const errorMessage = header[4] 
+    // {"h":["modify-order-undefined","2","error","4021","balance_locked"],"d":[]}
+    if (errorMessage==="balance_locked") return logger.info('balance_locked');
+    throw new Error(`[Websocket][Cobinhood]WS error:${rawMessage}`)
+  }
 }
 
 export const connectCobinhood = () => {

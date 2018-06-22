@@ -6,9 +6,9 @@ import * as http from 'http'
 import * as WebSocket from 'ws'
 import store from './store'
 import { addSub, removeClient } from './actions/sub '
-import { haltProcess } from './utils/utils';
-import logger from './utils/winston';
 import { connectCobinhood, client, connected} from './cobWsClient';
+import logger from './helpers/logger';
+
 
 
 const app = express()
@@ -84,8 +84,7 @@ wss.on('connection', (ws: WebSocket, req) => {
      */
     const allowList =['Invalid WebSocket frame: invalid status code 1006']
     if (allowList.includes(err.message)) return logger.warn(`[Error Listener] ${err.message}`)
-    logger.error(`[Websocket][RelayServer][Error Listener] ${err.message}`)
-    haltProcess(err)
+    logger.error(err)
   })
 })
 

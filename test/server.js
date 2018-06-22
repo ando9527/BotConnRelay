@@ -1,5 +1,4 @@
 import test from 'ava'
-import logger from '../src/utils/winston';
 const WS = require('ws')
 let client = null
 let connected = false
