@@ -8,7 +8,10 @@ import store from './store'
 import { addSub, removeClient } from './actions/sub '
 import { connectCobinhood, client, connected} from './cobWsClient';
 import logger from './helpers/logger';
+import packageJson from '../package.json'
 
+logger.info(`NODE_ENV ${process.env.NODE_ENV?process.env.NODE_ENV.toString():"NONE"}`)
+logger.info(`Version: ${packageJson.version}`)
 
 
 const app = express()
